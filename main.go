@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -13,7 +15,7 @@ type Movie struct {
 	ID       string    `json: "id"`
 	Isbn     string    `json: "isbn"`
 	Title    string    `json: "title"`
-	Director *Director `json: ""director`
+	Director *Director `json: "director"`
 }
 
 type Director struct {
@@ -26,7 +28,6 @@ var movies []Movie
 func getMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(movies)
-	//	fmt.Fprintf(w, "movies ar: %v", movies)
 }
 
 func deleteMovie(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +39,7 @@ func deleteMovie(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	fmt.Sprintln("Movie deleted successfully")
+	json.NewEncoder(w).Encode(movies)
 }
 
 func getMovie(w http.ResponseWriter, r *http.Request) {
@@ -47,11 +48,17 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 	for _, item := range movies {
 		if item.ID == params["id"] {
 			json.NewEncoder(w).Encode(item)
+			return
 		}
 	}
 }
 func createMovie(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	var movie Movie
+	_ = json.NewDecoder(r.Body).Decode(&movie)
+	movie.ID = strconv.Itoa(rand.Intn(100000000000000))
+	movies = append(movies, movie)
+	json.NewEncoder(w).Encode(movie)
 }
 func updateMovie(w http.ResponseWriter, r *http.Request) {
 
