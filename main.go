@@ -38,9 +38,24 @@ func deleteMovie(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	fmt.Fprintln("Movie deleted successfully")
+	fmt.Sprintln("Movie deleted successfully")
 }
 
+func getMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for _, item := range movies {
+		if item.ID == params["id"] {
+			json.NewEncoder(w).Encode(item)
+		}
+	}
+}
+func createMovie(w http.ResponseWriter, r *http.Request) {
+
+}
+func updateMovie(w http.ResponseWriter, r *http.Request) {
+
+}
 func main() {
 	r := mux.NewRouter()
 
